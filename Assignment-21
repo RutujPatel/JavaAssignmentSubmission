@@ -1,4 +1,4 @@
-public class PrintNumberChar {
+public class No_21 {
     public void print(int num, char ch) {
         System.out.println(num + " " + ch);
     }
@@ -13,3 +13,4 @@ public class PrintNumberChar {
         obj.print('b', 20);
     }
 }
+
