@@ -1,4 +1,4 @@
-public class No_21 {
+public class PrintNumberChar {
     public void print(int num, char ch) {
         System.out.println(num + " " + ch);
     }
