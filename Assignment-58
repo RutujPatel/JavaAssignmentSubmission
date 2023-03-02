@@ -17,7 +17,7 @@ public class No_58 {
 		h1.add("White");
 		h1.add("Green");
 		System.out.println("Now size is..."+h1.size());
-		System.out.println("Colours in the array list are..."+h1);
+		System.out.println("Colours in the HashSet are..."+h1);
 		
 		Iterator i1 = h1.iterator();
 		while(i1.hasNext())
