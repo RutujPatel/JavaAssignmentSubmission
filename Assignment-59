@@ -16,7 +16,8 @@ public class No_59 {
 		h1.add("Yellow");
 		h1.add("White");
 		h1.add("Green");
-    hi.add("Orange");
+                h1.add("Orange");
+		
 		System.out.println("Now size is..."+h1.size());
 		
 	}		
