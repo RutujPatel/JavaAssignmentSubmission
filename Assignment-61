@@ -21,6 +21,7 @@ public class No_61 {
 		hm.put(7, "Orange");
 		
 		System.out.println("Size of the HashMap is..."+hm.size());
+		
 		System.out.println("Colours in the HashMap now are..."+hm);
 		
 	
