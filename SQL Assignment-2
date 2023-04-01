@@ -1,0 +1,3 @@
+Select DeptNo
+FROM `assignmenttable1` 
+ORDER BY DeptNo ASC;
