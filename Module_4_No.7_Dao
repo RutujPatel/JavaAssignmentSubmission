@@ -1,100 +1,76 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class StudentDao {
-    private Connection cn;
     
-    public StudentDao(Connection cn) {
-        this.cn = cn;
+    private Connection connection;
+
+    public StudentDao(Connection connection) {
+        this.connection = connection;
     }
-    
-    // insert a new student record
-    public boolean insert(Student student) {
-        boolean flag = false;
-        try {
-            String sql = "insert into student(fname, lname, email, mobile, gender, password) values(?, ?, ?, ?, ?, ?)";
-            PreparedStatement ps = cn.prepareStatement(sql);
-            ps.setString(1, student.getFname());
-            ps.setString(2, student.getLname());
-            ps.setString(3, student.getEmail());
-            ps.setString(4, student.getMobile());
-            ps.setString(5, student.getGender());
-            ps.setString(6, student.getPassword());
-            ps.executeUpdate();
-            flag = true;
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    public void addStudent(Student student) throws SQLException {
+        String query = "INSERT INTO student (fname, lname, email, mobile, gender, password) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, student.getFname());
+        statement.setString(2, student.getLname());
+        statement.setString(3, student.getEmail());
+        statement.setString(4, student.getMobile());
+        statement.setString(5, student.getGender());
+        statement.setString(6, student.getPassword());
+        statement.executeUpdate();
+        statement.close();
+    }
+
+    public void updateStudent(Student student) throws SQLException {
+        String query = "UPDATE student SET fname=?, lname=?, email=?, mobile=?, gender=?, password=? WHERE id=?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, student.getFname());
+        statement.setString(2, student.getLname());
+        statement.setString(3, student.getEmail());
+        statement.setString(4, student.getMobile());
+        statement.setString(5, student.getGender());
+        statement.setString(6, student.getPassword());
+        statement.setInt(7, student.getId());
+        statement.executeUpdate();
+        statement.close();
+    }
+
+    public void deleteStudent(int id) throws SQLException {
+        String query = "DELETE FROM student WHERE id=?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, id);
+        statement.executeUpdate();
+        statement.close();
+        
+        // Store the deleted record in the deleted_data table
+        String insertQuery = "INSERT INTO deleted_data (id, fname, lname, email, mobile, gender, password) SELECT id, fname, lname, email, mobile, gender, password FROM student WHERE id=?";
+        PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+        insertStatement.setInt(1, id);
+        insertStatement.executeUpdate();
+        insertStatement.close();
+    }
+
+    public List<Student> getAllStudents() throws SQLException {
+        String query = "SELECT * FROM student";
+        PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet resultSet = statement.executeQuery();
+        List<Student> students = new ArrayList<>();
+        while (resultSet.next()) {
+            Student student = new Student();
+            student.setId(resultSet.getInt("id"));
+            student.setFname(resultSet.getString("fname"));
+            student.setLname(resultSet.getString("lname"));
+            student.setEmail(resultSet.getString("email"));
+            student.setMobile(resultSet.getString("mobile"));
+            student.setGender(resultSet.getString("gender"));
+            student.setPassword(resultSet.getString("password"));
+            students.add(student);
         }
-        return flag;
+        resultSet.close();
+        statement.close();
+        return students;
     }
     
-    // update an existing student record
-    public boolean update(Student student) {
-        boolean flag = false;
-        try {
-            String sql = "update student set fname=?, lname=?, email=?, mobile=?, gender=?, password=? where id=?";
-            PreparedStatement ps = cn.prepareStatement(sql);
-            ps.setString(1, student.getFname());
-            ps.setString(2, student.getLname());
-            ps.setString(3, student.getEmail());
-            ps.setString(4, student.getMobile());
-            ps.setString(5, student.getGender());
-            ps.setString(6, student.getPassword());
-            ps.setInt(7, student.getId());
-            ps.executeUpdate();
-            flag = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flag;
-    }
-    
-    // delete a student record
-    public boolean delete(int id) {
-        boolean flag = false;
-        try {
-            String sql = "delete from student where id=?";
-            PreparedStatement ps = cn.prepareStatement(sql);
-            ps.setInt(1, id);
-            ps.executeUpdate();
-            flag = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return flag;
-    }
-    
-    // get a student record by id
-    public Student getById(int id) {
-        Student student = null;
-        try {
-            String sql = "select * from student where id=?";
-            PreparedStatement ps = cn.prepareStatement(sql);
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                student = new Student();
-                student.setId(rs.getInt("id"));
-                student.setFname(rs.getString("fname"));
-                student.setLname(rs.getString("lname"));
-                student.setEmail(rs.getString("email"));
-                student.setMobile(rs.getString("mobile"));
-                student.setGender(rs.getString("gender"));
-                student.setPassword(rs.getString("password"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return student;
-    }
-    
-    // get all student records
-    public List<Student> getAll() {
-        List<Student> list = new ArrayList<>();
-        try {
-            String sql = "select * from student";
-            Statement stmt = cn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                Student student = new Student();
-                student.setId(rs.getInt("id"));
-                student.setFname(rs.getString("fname"));
-                student.setLname(rs.getString("lname"));
-                student.setEmail(rs.getString("email"));
+}
